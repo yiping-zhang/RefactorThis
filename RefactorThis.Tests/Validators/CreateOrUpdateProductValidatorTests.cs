@@ -12,9 +12,9 @@ namespace RefactorThis.Tests.Validators
     public class CreateOrUpdateProductValidatorTests
     {
         private CreateOrUpdateProductRequest _requestPayload;
-        
+
         private ICreateOrUpdateProductRequestValidator _subject;
-        
+
         private Exception _actualException;
 
         [SetUp]
@@ -35,7 +35,7 @@ namespace RefactorThis.Tests.Validators
         [Test]
         public void ItShouldThrowExceptionIfProductNameIsMissing()
         {
-            this.Given(x => GivenAnInvalidRequest())
+            this.Given(x => GivenAnInvalidRequestMissingProductName())
                 .When(x => WhenPerformValidation())
                 .Then(x => ThenAValidationExceptionShouldBeThrownWithMessage("Product name must be provided"))
                 .BDDfy();
@@ -49,11 +49,12 @@ namespace RefactorThis.Tests.Validators
                 Description = ""
             };
         }
-        
-        private void GivenAnInvalidRequest()
+
+        private void GivenAnInvalidRequestMissingProductName()
         {
             _requestPayload = new CreateOrUpdateProductRequest
             {
+                Name = string.Empty,
                 Description = ""
             };
         }
@@ -74,7 +75,7 @@ namespace RefactorThis.Tests.Validators
         {
             _actualException.ShouldBe(null);
         }
-        
+
         private void ThenAValidationExceptionShouldBeThrownWithMessage(string expectedExceptionMessage)
         {
             _actualException.Message.ShouldBe(expectedExceptionMessage);
