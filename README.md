@@ -1,9 +1,13 @@
-# refactor-this
-The attached project is a poorly written products API in C#.
+# Product Store
+This endpoint offers functionality to manage products and corresponding options. 
 
-Please evaluate and refactor areas where you think can be improved. 
+## Service Details
+* .NET Core 3.1
+* SQLite
 
-Consider all aspects of good software engineering and show us how you'll make it #beautiful and make it a production ready code.
+## API Specification and Controller Generation
+Specification is in
+
 
 ## Getting started for applicants
 

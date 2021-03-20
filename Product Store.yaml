@@ -1,0 +1,509 @@
+openapi: 3.0.3
+info:
+  version: 1.0.0
+  title: Product Store
+tags:
+  - name: Product
+  - name: Option
+paths:
+  /api/products:
+    get:
+      tags:
+        - Product
+      summary: Retrieve products
+      operationId: product_getProducts
+      parameters:
+        - name: name
+          in: query
+          description: The name (full or partial) of the product you would like to search for
+          schema:
+            type: string
+            example: 'Samsung S7'
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            example: 5
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            example: 1
+      responses:
+        200:
+          description: Products Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsRetrievedResponse'
+        204:
+          description: No Products Found
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+    post:
+      tags:
+        - Product
+      summary: Create a new product
+      operationId: product_createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateProductRequest'
+      responses:
+        201:
+          description: Product Created
+          content:
+            applicatin/json:
+              schema:
+                $ref: '#/components/schemas/ProductCreatedResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Product name must be provided
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+  /api/products/{id}:
+    get:
+      tags:
+        - Product
+      summary: Retrieve a product
+      operationId: product_getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+      responses:
+        200:
+          description: Product Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        204:
+          description: No Products Found
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+    put:
+      tags:
+        - Product
+      summary: Update a product
+      operationId: product_updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateProductRequest'
+      responses:
+        204:
+          description: Product Updated
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Product name must be provided
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: No product with specified Id found
+    delete:
+      tags:
+        - Product
+      summary: Delete a product and associated options
+      operationId: product_deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+      responses:
+        204:
+          description: Product Deleted
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+
+  /api/products/{id}/options:
+    get:
+      tags:
+        - Option
+      summary: Retrieve options for a specific product
+      operationId: option_getOptions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+      responses:
+        200:
+          description: Options Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OptionsRetrievedResponse'
+        204:
+          description: No Products Found
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+    post:
+      tags:
+        - Option
+      summary: Add a new product option to the specified product
+      operationId: option_addOption
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateOptionRequest'
+      responses:
+        201:
+          description: Option Added
+          content:
+            applicatin/json:
+              schema:
+                $ref: '#/components/schemas/OptionAddedResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Option name must be provided
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+  /api/products/{id}/options/{optionId}:
+    get:
+      tags:
+        - Option
+      summary: Find the specific product option for the specific product
+      operationId: option_getOption
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+        - name: optionId
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: 'b868fa7e-336a-4292-99d1-905592bb5177'
+      responses:
+        200:
+          description: Product Option Retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Option'
+        204:
+          description: No Products Found
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+    put:
+      tags:
+        - Option
+      summary: Update the specified product option
+      operationId: option_updateOption
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+        - name: optionId
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: 'b868fa7e-336a-4292-99d1-905592bb5177'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrUpdateOptionRequest'
+      responses:
+        204:
+          description: Option Updated
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Option name must be provided
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: No product with specified Id found
+    delete:
+      tags:
+        - Option
+      summary: Delete the specific option
+      operationId: option_deleteOption
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The product Id
+          schema:
+            type: string
+            format: uuid
+            example: '908fe6eb-6ab4-4783-99f8-85853fa7c21e'
+        - name: optionId
+          in: path
+          required: true
+          description: Product Id
+          schema:
+            type: string
+            format: uuid
+            example: 'b868fa7e-336a-4292-99d1-905592bb5177'
+      responses:
+        204:
+          description: Product Deleted
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                message: Authentication error
+
+components:
+  schemas:
+    CreateOrUpdateProductRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - Name
+      properties:
+        Name:
+          type: string
+          example: 'Samsung S7'
+        Description:
+          type: string
+          example: 'Samsung Galaxy S series released in 2016'
+        Price:
+          type: number
+          format: decimal
+          example: 123.45
+        DeliveryPrice:
+          type: number
+          format: decimal
+          example: 12.34
+
+    ProductsRetrievedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        Items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+
+    ProductCreatedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          description: 'Product Id'
+          type: string
+          format: uuid
+          example: '9af79ab2-b321-4f0d-b648-48beb38662a6'
+
+    OptionsRetrievedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        Items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Option'
+
+    OptionAddedResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          description: 'Option Id'
+          type: string
+          format: uuid
+          example: 'b868fa7e-336a-4292-99d1-905592bb5177'
+
+    CreateOrUpdateOptionRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - Name
+      properties:
+        Name:
+          type: string
+          example: 'White'
+        Description:
+          type: string
+          example: 'White Samsung S7'
+
+    Product:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: uuid
+          example: '9af79ab2-b321-4f0d-b648-48beb38662a6'
+        Name:
+          type: string
+          example: 'Samsung S7'
+        Description:
+          type: string
+          example: 'Samsung Galaxy S series released in 2016'
+        Price:
+          type: number
+          format: decimal
+          example: 123.45
+        DeliveryPrice:
+          type: number
+          format: decimal
+          example: 12.34
+
+    Option:
+      type: object
+      additionalProperties: false
+      properties:
+        Id:
+          type: string
+          format: uuid
+          example: '463cf0eb-e9e1-4a33-94c3-f8086b91ee2c'
+        Name:
+          type: string
+          example: 'White'
+        Description:
+          type: string
+          example: 'White Samsung S7'
+
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          example: Configuration is incorrect. Please contact GlobalX Integration Support.
+
+
+
