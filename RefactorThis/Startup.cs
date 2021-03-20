@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using RefactorThis.Controllers;
 using RefactorThis.Middleware;
 using RefactorThis.Repositories;
@@ -29,14 +30,16 @@ namespace RefactorThis
             services.AddScoped<IOptionController, ProductOptionControllerImpl>();
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductOptionRepository, ProductOptionRepository>();
 
             services.AddScoped<ICreateOrUpdateProductRequestValidator, CreateOrUpdateProductRequestValidator>();
-            
+            services.AddScoped<ICreateOrUpdateOptionRequestValidator, CreateOrUpdateOptionRequestValidator>();
+
             services.AddResponseCompression();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -48,7 +51,7 @@ namespace RefactorThis
                 app.UseHsts();
             }
             app.UseMiddleware<ExceptionResponseMiddleware>();
-            
+
             app.UseResponseCompression();
             app.UseHttpsRedirection();
             app.UseMvc();

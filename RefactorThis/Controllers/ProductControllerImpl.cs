@@ -21,8 +21,8 @@ namespace RefactorThis.Controllers
         public async Task<ProductsRetrievedResponse> GetProductsAsync(string name, int? limit, int? offset)
         {
             var dbResults = await _repository.RetrieveProducts(name, limit, offset);
-            var products = dbResults.Select(Map).ToList();
-            return new ProductsRetrievedResponse {Items = products};
+            var dtoProducts = dbResults.Select(Map).ToList();
+            return new ProductsRetrievedResponse {Items = dtoProducts};
         }
 
         public async Task<ProductCreatedResponse> CreateProductAsync(CreateOrUpdateProductRequest body)
@@ -70,7 +70,7 @@ namespace RefactorThis.Controllers
         {
             return new Product
             {
-                Id = dbProduct.Id, Name = dbProduct.Name, Description = dbProduct.Description, 
+                Id = dbProduct.Id, Name = dbProduct.Name, Description = dbProduct.Description,
                 Price = dbProduct.Price, DeliveryPrice = dbProduct.DeliveryPrice
             };
         }

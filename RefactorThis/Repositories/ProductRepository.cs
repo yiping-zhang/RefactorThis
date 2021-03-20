@@ -11,18 +11,18 @@ namespace RefactorThis.Repositories
         {
             var conn = Helpers.NewConnection();
             await conn.OpenAsync();
-            
+
             await using var command = conn.CreateCommand();
             command.CommandText = "select * from Products where id = $productId collate nocase";
             command.Parameters.AddWithValue("$productId", id);
-            
+
             Product result = null;
             var reader = await command.ExecuteReaderAsync();
             if (await reader.ReadAsync())
             {
-                result = new Product { 
+                result = new Product {
                     Id = new Guid(reader["Id"].ToString() ?? string.Empty), //TODO do we need to handle Exception thrown as a result of `new Guid(string.Empty)`??
-                    Name = reader["Name"].ToString(), 
+                    Name = reader["Name"].ToString(),
                     Description = DBNull.Value == reader["Description"] ? null : reader["Description"].ToString(),
                     Price = HandleCurrencyConversion(reader["Price"].ToString() ?? string.Empty),
                     DeliveryPrice = HandleCurrencyConversion(reader["DeliveryPrice"].ToString() ?? string.Empty)
@@ -40,9 +40,9 @@ namespace RefactorThis.Repositories
 
             await using (var cmd = conn.CreateCommand())
             {
-                cmd.CommandText = "delete from ProductOptions where productId = $productId; delete from Products where id = $productId collate nocase";
+                cmd.CommandText = "delete from ProductOptions where productId = $productId collate nocase; delete from Products where id = $productId collate nocase";
                 cmd.Parameters.AddWithValue("$productId", id);
-            
+
                 await cmd.ExecuteNonQueryAsync();
             }
             await conn.CloseAsync();
@@ -51,7 +51,7 @@ namespace RefactorThis.Repositories
         public async Task<Guid> CreateProduct(Product product)
         {
             var conn = Helpers.NewConnection();
-            conn.Open();
+            await conn.OpenAsync();
             await using var cmd = conn.CreateCommand();
             cmd.CommandText =
                 "insert into Products (id, name, description, price, deliveryprice) values ($id, $name, $description, $price, $deliveryPrice)";
@@ -61,8 +61,9 @@ namespace RefactorThis.Repositories
             cmd.Parameters.AddWithValue("$description", product.Description);
             cmd.Parameters.AddWithValue("$price", product.Price);
             cmd.Parameters.AddWithValue("$deliveryPrice", product.DeliveryPrice);
-            
+
             await cmd.ExecuteNonQueryAsync();
+            await conn.CloseAsync();
             return productId;
         }
 
@@ -75,7 +76,7 @@ namespace RefactorThis.Repositories
             await using (var cmd = conn.CreateCommand())
             {
                 cmd.CommandText = "select * from Products";
-                
+
                 if (!string.IsNullOrEmpty(name))
                 {
                     cmd.CommandText += " where Name LIKE @productName";
@@ -87,7 +88,7 @@ namespace RefactorThis.Repositories
                     cmd.Parameters.AddWithValue("$limit", limit);
                     cmd.Parameters.AddWithValue("$offset", offset);
                 }
-                
+
                 var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {

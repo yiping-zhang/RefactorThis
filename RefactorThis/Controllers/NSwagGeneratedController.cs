@@ -106,32 +106,32 @@ namespace RefactorThis.Controllers
     public interface IOptionController
     {
         /// <summary>Retrieve options for a specific product</summary>
-        /// <param name="id">Product Id</param>
+        /// <param name="productId">Product Id</param>
         /// <returns>Options Retrieved</returns>
-        System.Threading.Tasks.Task<OptionsRetrievedResponse> GetOptionsAsync(System.Guid id);
+        System.Threading.Tasks.Task<OptionsRetrievedResponse> GetOptionsAsync(System.Guid productId);
     
         /// <summary>Add a new product option to the specified product</summary>
-        /// <param name="id">Product Id</param>
+        /// <param name="productId">Product Id</param>
         /// <returns>Option Added</returns>
-        System.Threading.Tasks.Task<OptionAddedResponse> AddOptionAsync(System.Guid id, CreateOrUpdateOptionRequest body);
+        System.Threading.Tasks.Task<OptionAddedResponse> AddOptionAsync(System.Guid productId, CreateOrUpdateOptionRequest body);
     
         /// <summary>Find the specific product option for the specific product</summary>
-        /// <param name="id">Product Id</param>
+        /// <param name="productId">Product Id</param>
         /// <param name="optionId">Product Id</param>
         /// <returns>Product Option Retrieved</returns>
-        System.Threading.Tasks.Task<Option> GetOptionAsync(System.Guid id, System.Guid optionId);
+        System.Threading.Tasks.Task<Option> GetOptionAsync(System.Guid productId, System.Guid optionId);
     
         /// <summary>Update the specified product option</summary>
-        /// <param name="id">The product Id</param>
+        /// <param name="productId">The product Id</param>
         /// <param name="optionId">Product Id</param>
         /// <returns>Option Updated</returns>
-        System.Threading.Tasks.Task UpdateOptionAsync(System.Guid id, System.Guid optionId, CreateOrUpdateOptionRequest body);
+        System.Threading.Tasks.Task UpdateOptionAsync(System.Guid productId, System.Guid optionId, CreateOrUpdateOptionRequest body);
     
         /// <summary>Delete the specific option</summary>
-        /// <param name="id">The product Id</param>
+        /// <param name="productId">The product Id</param>
         /// <param name="optionId">Product Id</param>
         /// <returns>Product Deleted</returns>
-        System.Threading.Tasks.Task DeleteOptionAsync(System.Guid id, System.Guid optionId);
+        System.Threading.Tasks.Task DeleteOptionAsync(System.Guid productId, System.Guid optionId);
     
     }
     
